@@ -1,0 +1,6 @@
+*.pro
+*~
+*.swap
+*.o
+*.out
+*.user
