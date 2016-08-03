@@ -6,6 +6,7 @@
 #include <QtGui>
 #include <QDebug>
 #include "mysquare.h"
+#include "ui_mainwindow.h"
 
 namespace Ui {
 class MainWindow;
@@ -22,7 +23,11 @@ public:
 private:
     Ui::MainWindow *ui;
     QGraphicsScene *scene;
-    MySquare *square;
+    CdiodeItem **cdiode;
+    int cdiodectr;
+
+private slots:
+    void addCdiode(QListWidgetItem *);
 };
 
 #endif // MAINWINDOW_H

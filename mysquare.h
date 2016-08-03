@@ -4,10 +4,10 @@
 #include <QPainter>
 #include <QDebug>
 
-class MySquare : public QGraphicsItem
+class CdiodeItem : public QGraphicsItem
 {
 public:
-    MySquare();
+    CdiodeItem();
     virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
     virtual QRectF boundingRect() const;
 };
