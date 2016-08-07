@@ -1,8 +1,9 @@
-#include "mysquare.h"
+#include "cdiodeitem.h"
 
 CdiodeItem::CdiodeItem()
 {
     setFlag(QGraphicsItem::ItemIsMovable);
+    setFlag(QGraphicsItem::ItemIsSelectable);
 }
 
 void CdiodeItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -34,9 +35,11 @@ void CdiodeItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
         painter->drawLine(line[i]);
 
     }
+
     painter->drawPolygon(poly);
     painter->fillPath(path, fillBrush);
-    update();
+    //qDebug()<<QString("Jestem");
+    //update(); - powoduje ze caly czas na nowo sie maluje obiekt
 }
 
 QRectF CdiodeItem::boundingRect() const
