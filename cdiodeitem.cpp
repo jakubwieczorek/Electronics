@@ -19,26 +19,27 @@ void CdiodeItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     poly<<QPointF(0,50);
     poly<<QPointF(-50,100);
 
+    QColor brushColor(this->getInteriorRed(), this->getInteriorBlue(), getInteriorGreen());
     QBrush fillBrush;
-    fillBrush.setColor(Qt::red);
+    fillBrush.setColor(brushColor);
     fillBrush.setStyle(Qt::SolidPattern);
 
     QPainterPath path;
     path.addPolygon(poly);
 
-    QPen blackPen(Qt::black, 6);
-    blackPen.setJoinStyle(Qt::MiterJoin);
-    painter->setPen(blackPen);
+    QColor penColor(this->getLineRed(), this->getLineBlue(), getLineGreen());
+    QPen pen(penColor, 5);
+    pen.setJoinStyle(Qt::MiterJoin);
+    painter->setPen(pen);
 
     for(int i=0; i<4; i++)
     {
         painter->drawLine(line[i]);
-
     }
 
     painter->drawPolygon(poly);
     painter->fillPath(path, fillBrush);
-    //qDebug()<<QString("Jestem");
+
     //update(); - powoduje ze caly czas na nowo sie maluje obiekt
 }
 

@@ -1,8 +1,5 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include <QLabel>
-#include <QLineEdit>
-#include <QPushButton>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -21,19 +18,19 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //counters of item
     cdiode = new CdiodeItem*;
-    cdiodectr = 0;
 
-    width = new QLabel;
-    ewidth = new QLineEdit;
     spin = new QLabel;
     espin = new QLineEdit;
-    colorButton = new QPushButton;
+    lineColorButton = new QPushButton;
+    interiorColorButton = new QPushButton;
 
     //connections
-    connect(ui->listWidget, SIGNAL(itemPressed(QListWidgetItem*)), this, SLOT(addCdiode(QListWidgetItem*)));
+    connect(ui->listWidget, SIGNAL(itemPressed(QListWidgetItem*)), this, SLOT(addElem(QListWidgetItem*)));
     connect(ui->actionZako_cz, SIGNAL(triggered(bool)), qApp, SLOT(quit()));
     connect(scene, SIGNAL(selectionChanged()), this, SLOT(whichSelected()));
-    connect(ewidth, SIGNAL(editingFinished()), this, SLOT(paintCdiode()));
+    connect(espin, SIGNAL(editingFinished()), this, SLOT(paintElem()));
+    connect(lineColorButton, SIGNAL(released()), this, SLOT(lineButtonClicked()));
+    connect(interiorColorButton, SIGNAL(released()), this, SLOT(interiorButtonClicked()));
 
     gboxLayout = new QGridLayout;
     ui->groupBox->setLayout(gboxLayout);
@@ -43,58 +40,59 @@ MainWindow::~MainWindow()
 {
     delete ui;
     delete scene;
-    for(int i=0; i<cdiodectr; i++)
+    for(int i=0; i<container.container.size(); i++)
     {
         delete cdiode[i];
     }
     delete cdiode;
-    delete width;
-    delete ewidth;
     delete spin;
-    delete colorButton;
+    delete espin;
+    delete lineColorButton;
+    delete interiorColorButton;
     delete gboxLayout;
 }
 
-void MainWindow::addCdiode(QListWidgetItem *itm)
+void MainWindow::addElem(QListWidgetItem *itm)
 {
     if(itm == ui->listWidget->item(0))
     {
         try
         {
-            cdiode[cdiodectr] = new CdiodeItem;
+            cdiode[container.container.size()] = new CdiodeItem;
+            container+cdiode[container.container.size()];
         }
-        catch (std::bad_alloc& msg)
+        catch(std::bad_alloc& msg)
         {
             qDebug()<<"bad_alloc caught: "<<msg.what();
             return;
         }
 
-        scene->addItem(cdiode[cdiodectr++]);
+        scene->addItem(cdiode[container.container.size()-1]);
     }
-    //qDebug()<<itm->text() + " " + QString::number(cdiodectr);
 }
 
-void MainWindow::modCdiode(QGraphicsItem *itm)
+void MainWindow::modElem(QGraphicsItem *itm)
 {
-    CdiodeItem *citm = dynamic_cast<CdiodeItem*>(itm);
-    ui->groupBox->setTitle(tr("&Capacity Diode"));
-
-    width->setText(tr("width"));
-    ewidth->setText(tr("100"));
-
-    gboxLayout->addWidget(width,1,1);
-    gboxLayout->addWidget(ewidth,1,2);
-
     spin->setText(tr("spin"));
-    espin->setText(tr("0"));
     espin->setMaximumSize(QSize(10000,25));
 
-    gboxLayout->addWidget(spin, 2,1);
-    gboxLayout->addWidget(espin,2,2);
+    gboxLayout->addWidget(spin, 1,1);
+    gboxLayout->addWidget(espin,1,2);
 
-    colorButton->setText(tr("interior color"));
+    interiorColorButton->setText(tr("interior color"));
+    lineColorButton->setText(tr("line color"));
 
-    gboxLayout->addWidget(colorButton, 3, 1);
+    gboxLayout->addWidget(interiorColorButton, 2, 1);
+    gboxLayout->addWidget(lineColorButton, 3, 1);
+
+    CdiodeItem *citm;
+
+    if((citm = dynamic_cast<CdiodeItem*>(itm))!=NULL)
+    {
+        ui->groupBox->setTitle(tr("&Capacity Diode"));
+
+        espin->setText(QString::number(citm->getSpin()));
+    }
 }
 
 void MainWindow::whichSelected()
@@ -107,7 +105,7 @@ void MainWindow::whichSelected()
         if(itm->isSelected() == true) break;
     }
 
-    modCdiode(itm);
+    modElem(itm);
 
     for(int i=0; i<itemsList.count(); i++)
     {
@@ -115,9 +113,48 @@ void MainWindow::whichSelected()
     }
 }
 
-void MainWindow::paintCdiode()
+void MainWindow::paintElem()
 {
-    CdiodeItem *citm = dynamic_cast<CdiodeItem*>(itm);
-    citm->setRotation(90);
-    itm->update();
+    CdiodeItem *citm;
+    if(((citm = dynamic_cast<CdiodeItem*>(itm))!=NULL))
+    {
+        citm->setInteriorRed(interiorColor.red());
+        citm->setInteriorGreen(interiorColor.green());
+        citm->setInteriorBlue(interiorColor.blue());
+
+        qDebug()<<"Line blue: "<<QString::number(citm->getLineBlue());
+        qDebug()<<"Line red: "<<QString::number(citm->getLineRed());
+        qDebug()<<"Line green: "<<QString::number(citm->getLineGreen());
+
+        qDebug()<<"Line blue color: "<<QString::number(lineColor.blue());
+        qDebug()<<"Line red color: "<<QString::number(lineColor.red());
+        qDebug()<<"Line green color: "<<QString::number(lineColor.green());
+
+        citm->setLineRed(lineColor.red());
+        citm->setLineGreen(lineColor.green());
+        citm->setLineBlue(lineColor.blue());
+
+        qDebug()<<"Line blue: "<<QString::number(citm->getLineBlue());
+        qDebug()<<"Line red: "<<QString::number(citm->getLineRed());
+        qDebug()<<"Line green: "<<QString::number(citm->getLineGreen());
+
+        citm->setSpin(espin->text().toShort());
+
+        citm->setRotation(citm->getSpin());
+
+        citm->update();
+    }
+}
+
+void MainWindow::lineButtonClicked()
+{
+    lineColor = QColorDialog::getColor(Qt::blue, this, QString("Set line color"));
+
+    paintElem();
+}
+
+void MainWindow::interiorButtonClicked()
+{
+    interiorColor = QColorDialog::getColor(Qt::green, this, QString("Set interior color"));
+    paintElem();
 }

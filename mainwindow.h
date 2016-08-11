@@ -12,6 +12,7 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
+#include <QColorDialog>
 
 namespace Ui {
 class MainWindow;
@@ -30,21 +31,25 @@ private:
     QGraphicsScene *scene;
     QGridLayout *gboxLayout;
     CdiodeItem **cdiode;
-    int cdiodectr;
+
     Dokument container;
     QGraphicsItem *itm;
 
-    QLabel *width;
-    QLineEdit *ewidth;
     QLabel *spin;
     QLineEdit *espin;
-    QPushButton *colorButton;
+    QPushButton *lineColorButton;
+    QPushButton *interiorColorButton;
+
+    QColor lineColor;
+    QColor interiorColor;
 
 private slots:
-    void addCdiode(QListWidgetItem *);
-    void modCdiode(QGraphicsItem *);
+    void addElem(QListWidgetItem *);
+    void modElem(QGraphicsItem *);
     void whichSelected();
-    void paintCdiode();
+    void paintElem();
+    void lineButtonClicked();
+    void interiorButtonClicked();
 };
 
 #endif // MAINWINDOW_H
