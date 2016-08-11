@@ -16,8 +16,9 @@ MainWindow::MainWindow(QWidget *parent) :
     scene = new QGraphicsScene(this);
     ui->graphicsView->setScene(scene);
 
-    //counters of item
+    //counters of Cdiode and ftransistor
     cdiode = new CdiodeItem*;
+    ftransistor = new FtransistorItem*;
 
     spin = new QLabel;
     espin = new QLineEdit;
@@ -60,14 +61,13 @@ void MainWindow::addElem(QListWidgetItem *itm)
         {
             cdiode[container.container.size()] = new CdiodeItem;
             container+cdiode[container.container.size()];
+            scene->addItem(cdiode[container.container.size()-1]);
         }
         catch(std::bad_alloc& msg)
         {
             qDebug()<<"bad_alloc caught: "<<msg.what();
             return;
         }
-
-        scene->addItem(cdiode[container.container.size()-1]);
     }
 }
 
@@ -90,6 +90,14 @@ void MainWindow::modElem(QGraphicsItem *itm)
     if((citm = dynamic_cast<CdiodeItem*>(itm))!=NULL)
     {
         ui->groupBox->setTitle(tr("&Capacity Diode"));
+
+        lineColor.setRed(citm->getLineRed());
+        lineColor.setGreen(citm->getLineGreen());
+        lineColor.setBlue(citm->getLineBlue());
+
+        interiorColor.setRed(citm->getInteriorRed());
+        interiorColor.setGreen(citm->getInteriorGreen());
+        interiorColor.setBlue(citm->getInteriorBlue());
 
         espin->setText(QString::number(citm->getSpin()));
     }
@@ -122,24 +130,11 @@ void MainWindow::paintElem()
         citm->setInteriorGreen(interiorColor.green());
         citm->setInteriorBlue(interiorColor.blue());
 
-        qDebug()<<"Line blue: "<<QString::number(citm->getLineBlue());
-        qDebug()<<"Line red: "<<QString::number(citm->getLineRed());
-        qDebug()<<"Line green: "<<QString::number(citm->getLineGreen());
-
-        qDebug()<<"Line blue color: "<<QString::number(lineColor.blue());
-        qDebug()<<"Line red color: "<<QString::number(lineColor.red());
-        qDebug()<<"Line green color: "<<QString::number(lineColor.green());
-
         citm->setLineRed(lineColor.red());
         citm->setLineGreen(lineColor.green());
         citm->setLineBlue(lineColor.blue());
 
-        qDebug()<<"Line blue: "<<QString::number(citm->getLineBlue());
-        qDebug()<<"Line red: "<<QString::number(citm->getLineRed());
-        qDebug()<<"Line green: "<<QString::number(citm->getLineGreen());
-
         citm->setSpin(espin->text().toShort());
-
         citm->setRotation(citm->getSpin());
 
         citm->update();
@@ -156,5 +151,6 @@ void MainWindow::lineButtonClicked()
 void MainWindow::interiorButtonClicked()
 {
     interiorColor = QColorDialog::getColor(Qt::green, this, QString("Set interior color"));
+
     paintElem();
 }

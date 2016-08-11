@@ -19,7 +19,7 @@ void CdiodeItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     poly<<QPointF(0,50);
     poly<<QPointF(-50,100);
 
-    QColor brushColor(this->getInteriorRed(), this->getInteriorBlue(), getInteriorGreen());
+    QColor brushColor(getInteriorRed(), getInteriorGreen(), getInteriorBlue());
     QBrush fillBrush;
     fillBrush.setColor(brushColor);
     fillBrush.setStyle(Qt::SolidPattern);
@@ -27,8 +27,8 @@ void CdiodeItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     QPainterPath path;
     path.addPolygon(poly);
 
-    QColor penColor(this->getLineRed(), this->getLineBlue(), getLineGreen());
-    QPen pen(penColor, 5);
+    QColor penColor(getLineRed(), getLineGreen(), getLineBlue());
+    QPen pen(penColor, 3.5);
     pen.setJoinStyle(Qt::MiterJoin);
     painter->setPen(pen);
 

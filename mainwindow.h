@@ -6,6 +6,7 @@
 #include <QtGui>
 #include <QDebug>
 #include "cdiodeitem.h"
+#include "ftransistoritem.h"
 #include "ui_mainwindow.h"
 #include <dokument.h>
 #include <QFormLayout>
@@ -31,6 +32,7 @@ private:
     QGraphicsScene *scene;
     QGridLayout *gboxLayout;
     CdiodeItem **cdiode;
+    FtransistorItem **ftransistor;
 
     Dokument container;
     QGraphicsItem *itm;
