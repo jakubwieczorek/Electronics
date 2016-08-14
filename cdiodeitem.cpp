@@ -4,9 +4,18 @@ CdiodeItem::CdiodeItem()
 {
     setFlag(QGraphicsItem::ItemIsMovable);
     setFlag(QGraphicsItem::ItemIsSelectable);
+    QElem::setBacklightRect(boundingRect());
 }
 
 void CdiodeItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
+    if(getBacklight())
+        QElem::paint(painter, option, widget);
+
+    this->paint(painter);
+}
+
+void CdiodeItem::paint(QPainter *painter)
 {
     QLineF line[4];
     line[0].setPoints(QPoint(0,0), QPoint(0,100));
@@ -40,7 +49,7 @@ void CdiodeItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     painter->drawPolygon(poly);
     painter->fillPath(path, fillBrush);
 
-    //update(); - powoduje ze caly czas na nowo sie maluje obiekt
+    this->setScale(0.75);
 }
 
 QRectF CdiodeItem::boundingRect() const

@@ -31,8 +31,7 @@ private:
     Ui::MainWindow *ui;
     QGraphicsScene *scene;
     QGridLayout *gboxLayout;
-    CdiodeItem **cdiode;
-    FtransistorItem **ftransistor;
+    QElem **elements;
 
     Dokument container;
     QGraphicsItem *itm;
@@ -45,6 +44,8 @@ private:
     QColor lineColor;
     QColor interiorColor;
 
+    QString mCurrentPath;
+
 private slots:
     void addElem(QListWidgetItem *);
     void modElem(QGraphicsItem *);
@@ -52,6 +53,7 @@ private slots:
     void paintElem();
     void lineButtonClicked();
     void interiorButtonClicked();
+    void actionZapisz();
 };
 
 #endif // MAINWINDOW_H

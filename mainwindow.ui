@@ -64,6 +64,7 @@
     </property>
     <addaction name="actionOtw_rz"/>
     <addaction name="actionZapisz"/>
+    <addaction name="separator"/>
     <addaction name="actionZako_cz"/>
    </widget>
    <widget class="QMenu" name="menuEdycja">
@@ -84,17 +85,17 @@
   </widget>
   <action name="actionOtw_rz">
    <property name="text">
-    <string>Otwórz</string>
+    <string>Ot&amp;wórz</string>
    </property>
   </action>
   <action name="actionZapisz">
    <property name="text">
-    <string>Zapisz</string>
+    <string>&amp;Zapisz</string>
    </property>
   </action>
   <action name="actionZako_cz">
    <property name="text">
-    <string>Zakończ</string>
+    <string>&amp;Zakończ</string>
    </property>
   </action>
  </widget>
