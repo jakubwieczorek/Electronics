@@ -8,8 +8,6 @@ class MyGraphicsView : public QGraphicsView
 
 public:
     MyGraphicsView(QWidget *widget);
-//private slots:
-    //virtual void mouseMoveEvent(QMouseEvent *event);
 };
 
 #endif // MYGRAPHICSVIEW_H

@@ -15,7 +15,6 @@ public:
 
     virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
     virtual QRectF boundingRect() const;
-    //virtual void paint(QPainter *painter) = 0;
 
     void setBacklight(bool isBacklighted){backlight = isBacklighted;}
     bool getBacklight(){return backlight;}

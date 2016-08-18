@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include <QFileDialog>
 #include <QKeyEvent>
+#include <QSvgGenerator>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -55,6 +56,8 @@ MainWindow::~MainWindow()
     delete lineColorButton;
     delete interiorColorButton;
     delete gboxLayout;
+    delete itm;
+    delete actualElem;
 }
 
 enum {widgetCdiode, widgetFtransistor};
@@ -154,9 +157,8 @@ void MainWindow::paintElem()
 
         actualElem->setSpin(espin->text().toShort());
         actualElem->setRotation(actualElem->getSpin());
+        actualElem->update();
     }
-
-    actualElem->update();
 }
 
 void MainWindow::lineButtonClicked()
@@ -175,84 +177,57 @@ void MainWindow::interiorButtonClicked()
 
 void MainWindow::actionZapisz()
 {
-    QList <QGraphicsItem*>items = scene->items();
-
-    int shiftX = 0; //trzeba przesunac uklad wspolrzednych
-    int shiftY = 0;
-
-    for(int i=0; i<container.container.size(); i++)
-    {
-        actualElem = dynamic_cast<QElem*>(items.at(i));
-
-        if(actualElem->x() < shiftX)
-            shiftX = actualElem->x();
-
-        if(actualElem->y() < shiftY)
-            shiftY = actualElem->y();
-    }
-
-    qDebug()<<QString::number(shiftX)<<QString::number(shiftY);
-
-    for(int i=0; i < container.container.size(); i++)
-    {
-        actualElem = dynamic_cast<QElem*>(items.at(i));
-        qDebug()<<QString::number(actualElem->x())<<QString::number(actualElem->y());
-        //gdy shiftX lub shiftY < 0 to neutralizujemy do 0 najbardziej przesuniety actualElement
-
-        //container.container.at(i)->setX(static_cast<unsigned short>(actualElem->x() - shiftX));
-        //container.container.at(i)->setY(static_cast<unsigned short>(actualElem->y() - shiftY));
-
-        container.container.at(i)->setY(container.container.at(i)->getY() - shiftY);
-        container.container.at(i)->setX(container.container.at(i)->getX() - shiftX);
-    }
-
     QString fileName;
     fileName = QFileDialog::getSaveFileName(this, tr("Save file"),
             mCurrentPath, "SVG files (*.svg)");
 
+    int shiftX = 0;
+    int shiftY = 0;
 
-    if (!fileName.isEmpty())
+    for(int i = 0; i < QContainer.size(); i++)
     {
-        container>>(fileName.toStdString());
+        if(QContainer.at(i)->x() < shiftX)
+        {
+            shiftX = QContainer.at(i)->x();
+        }
+
+        if(QContainer.at(i)->y() < shiftY)
+        {
+            shiftY = QContainer.at(i)->y();
+        }
+    }
+
+    qDebug()<<QString::number(shiftX)<<QString::number(shiftY);
+
+    for(int i = 0; i < QContainer.size(); i++)
+    {
+        container.container.at(i)->setX(QContainer.at(i)->x() - shiftX);
+        container.container.at(i)->setY(QContainer.at(i)->y() - shiftY);
+    }
+
+    actualElem->setBacklight(false);
+    actualElem->update();
+
+    if(!fileName.isEmpty())
+    {
+        QSvgGenerator svgGen;
+
+        svgGen.setFileName(fileName);
+        svgGen.setSize(QSize(200, 200));
+        svgGen.setViewBox(QRect(0, 0, 200, 200));
+
+        QPainter painter(&svgGen);
+        scene->render(&painter);
+        std::string stdFileName = fileName.toStdString();
 
         QFileInfo info(fileName);
         QString txtFileName = info.path() + QDir::separator() + info.completeBaseName() + ".txt";
-        std::string stdTxtNameFile = txtFileName.toStdString();
-        container.expToTxt(stdTxtNameFile);
+        stdFileName = txtFileName.toStdString();
+        container.expToTxt(stdFileName);
     }
 
-    // example from QT
-    /*
-    if (!fileName.isEmpty())
-    {
-        QString qtFileName = "qt.svg";
-
-        QSvgGenerator generator;
-        generator.setFileName(qtFileName);
-        generator.setSize(QSize(200, 200));
-        generator.setViewBox(QRect(0, 0, 200, 200));
-        generator.setTitle(tr("SVG Generator Example Drawing"));
-        generator.setDescription(tr("An SVG drawing created by the SVG Generator "
-                                    "Example provided with Qt."));
-        QPainter painter;
-        painter.begin(&generator);
-
-        CdiodeItem *citm = dynamic_cast<CdiodeItem*>(elem);
-
-        FtransistorItem *fitm = dynamic_cast<FtransistorItem*>(elem);
-
-        if(citm!=NULL)
-        {
-            citm->paint(&painter);
-            painter.end();
-        }else
-        if(fitm!=NULL)
-        {
-            fitm->paint(&painter);
-            painter.end();
-        }
-    }
-    */
+    actualElem->setBacklight(true);
+    actualElem->update();
 }
 
 void MainWindow::actionOtworz()
@@ -267,6 +242,7 @@ void MainWindow::actionOtworz()
         container.container.clear();
         scene->clear();
         itm = NULL;
+        actualElem = NULL;
 
         std::string stdFileName = fileName.toStdString();
         container.impFromTxt(stdFileName, factory);
@@ -276,11 +252,26 @@ void MainWindow::actionOtworz()
             if(dynamic_cast<Cdiode*>(container.container.at(i)) != NULL)
             {
                 QContainer.append(new CdiodeItem);
+
             }else
             if(dynamic_cast<Ftransistor*>(container.container.at(i)) != NULL)
             {
                 QContainer.append(new FtransistorItem);
             }
+
+            QContainer.last()->setPos(QPointF(container.container.at(i)->getX(),
+                                              container.container.at(i)->getY()));
+
+            QContainer.last()->setInteriorRed(container.container.at(i)->getInteriorRed());
+            QContainer.last()->setInteriorGreen(container.container.at(i)->getInteriorGreen());
+            QContainer.last()->setInteriorBlue(container.container.at(i)->getInteriorBlue());
+
+            QContainer.last()->setLineRed(container.container.at(i)->getLineRed());
+            QContainer.last()->setLineGreen(container.container.at(i)->getLineGreen());
+            QContainer.last()->setLineBlue(container.container.at(i)->getLineBlue());
+
+            QContainer.last()->setSpin(container.container.at(i)->getSpin());
+            QContainer.last()->setRotation(container.container.at(i)->getSpin());
 
             scene->addItem(QContainer.at(i));
         }

@@ -50,9 +50,6 @@ void CdiodeItem::paint(QPainter *painter)
     painter->fillPath(path, fillBrush);
 
     this->setScale(0.75);
-
-    Cdiode::setX(static_cast<unsigned short>(this->x()));
-    Cdiode::setY(static_cast<unsigned short>(this->y()));
 }
 
 QRectF CdiodeItem::boundingRect() const
