@@ -1,15 +1,16 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QFileDialog>
-#include <QSvgGenerator>
+#include <QKeyEvent>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow), factory(Factory::getInstance())
 {
-    Factory factory = Factory::getInstance();
+    //factory = Factory::getInstance();
     Ftransistor::ID = factory.registerElement(Ftransistor::CreateFtransistor);
     Cdiode::ID = factory.registerElement(Cdiode::CreateCdiode);
+
     //coding
     QTextCodec::setCodecForLocale(QTextCodec::codecForName ("UTF-8"));
     ui->setupUi(this);
@@ -26,9 +27,6 @@ MainWindow::MainWindow(QWidget *parent) :
     scene = new QGraphicsScene(this);
     ui->graphicsView->setScene(scene);
 
-    //counters of Cdiode and ftransistor
-    elements = new QElem*;
-
     spin = new QLabel;
     espin = new QLineEdit;
     lineColorButton = new QPushButton;
@@ -42,6 +40,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(lineColorButton, SIGNAL(released()), this, SLOT(lineButtonClicked()));
     connect(interiorColorButton, SIGNAL(released()), this, SLOT(interiorButtonClicked()));
     connect(ui->actionZapisz, SIGNAL(triggered(bool)), this, SLOT(actionZapisz()));
+    connect(ui->actionOtw_rz, SIGNAL(triggered(bool)), this, SLOT(actionOtworz()));
 
     gboxLayout = new QGridLayout;
     ui->groupBox->setLayout(gboxLayout);
@@ -51,11 +50,6 @@ MainWindow::~MainWindow()
 {
     delete ui;
     delete scene;
-    for(int i=0; i<container.container.size(); i++)
-    {
-        delete elements[i];
-    }
-    delete elements;
     delete spin;
     delete espin;
     delete lineColorButton;
@@ -69,15 +63,16 @@ void MainWindow::addElem(QListWidgetItem *itm)
 {
     if(itm == ui->listWidget->item(widgetCdiode))
     {
-        elements[container.container.size()] = new CdiodeItem;
+        QContainer.append(new CdiodeItem);
     }else
     if(itm == ui->listWidget->item(widgetFtransistor))
     {
-        elements[container.container.size()] = new FtransistorItem;
+        QContainer.append(new FtransistorItem);
     }
 
-    container+elements[container.container.size()];
-    scene->addItem(elements[container.container.size()-1]);
+    container+QContainer.last();
+
+    scene->addItem(QContainer.at(QContainer.size() - 1));
 }
 
 void MainWindow::modElem(QGraphicsItem *itm)
@@ -97,30 +92,28 @@ void MainWindow::modElem(QGraphicsItem *itm)
     CdiodeItem *citm;
     FtransistorItem *fitm;
 
-    QElem *elem;
-
-    if((elem = dynamic_cast<QElem*>(itm))!=NULL)
+    if((actualElem = dynamic_cast<QElem*>(itm))!=NULL)
     {
         ui->groupBox->setTitle(tr("&Capacity Diode"));
 
-        lineColor.setRed(elem->getLineRed());
-        lineColor.setGreen(elem->getLineGreen());
-        lineColor.setBlue(elem->getLineBlue());
+        lineColor.setRed(actualElem->getLineRed());
+        lineColor.setGreen(actualElem->getLineGreen());
+        lineColor.setBlue(actualElem->getLineBlue());
 
-        interiorColor.setRed(elem->getInteriorRed());
-        interiorColor.setGreen(elem->getInteriorGreen());
-        interiorColor.setBlue(elem->getInteriorBlue());
+        interiorColor.setRed(actualElem->getInteriorRed());
+        interiorColor.setGreen(actualElem->getInteriorGreen());
+        interiorColor.setBlue(actualElem->getInteriorBlue());
 
-        espin->setText(QString::number(elem->getSpin()));
+        espin->setText(QString::number(actualElem->getSpin()));
     }
 
-    elem->setBacklight(true);
+    actualElem->setBacklight(true);
 
-    if((citm = dynamic_cast<CdiodeItem*>(elem))!=NULL)
+    if((citm = dynamic_cast<CdiodeItem*>(actualElem))!=NULL)
     {
         ui->groupBox->setTitle(tr("&Capacity Diode"));
     }else
-    if((fitm = dynamic_cast<FtransistorItem*>(elem))!=NULL)
+    if((fitm = dynamic_cast<FtransistorItem*>(actualElem))!=NULL)
     {
         ui->groupBox->setTitle(tr("&Photo Transistor"));
     }
@@ -130,8 +123,8 @@ void MainWindow::whichSelected()
 {
     if(itm!=NULL)
     {
-        QElem *elem = dynamic_cast<QElem*>(itm);
-        elem->setBacklight(false);
+        actualElem = dynamic_cast<QElem*>(itm);
+        actualElem->setBacklight(false);
     }
 
     QList <QGraphicsItem*>itemsList = scene->selectedItems();
@@ -149,23 +142,21 @@ void MainWindow::whichSelected()
 
 void MainWindow::paintElem()
 {
-    QElem *elem;
-
-    if(((elem = dynamic_cast<QElem*>(itm))!=NULL))
+    if(((actualElem = dynamic_cast<QElem*>(itm))!=NULL))
     {
-        elem->setInteriorRed(interiorColor.red());
-        elem->setInteriorGreen(interiorColor.green());
-        elem->setInteriorBlue(interiorColor.blue());
+        actualElem->setInteriorRed(interiorColor.red());
+        actualElem->setInteriorGreen(interiorColor.green());
+        actualElem->setInteriorBlue(interiorColor.blue());
 
-        elem->setLineRed(lineColor.red());
-        elem->setLineGreen(lineColor.green());
-        elem->setLineBlue(lineColor.blue());
+        actualElem->setLineRed(lineColor.red());
+        actualElem->setLineGreen(lineColor.green());
+        actualElem->setLineBlue(lineColor.blue());
 
-        elem->setSpin(espin->text().toShort());
-        elem->setRotation(elem->getSpin());
+        actualElem->setSpin(espin->text().toShort());
+        actualElem->setRotation(actualElem->getSpin());
     }
 
-    elem->update();
+    actualElem->update();
 }
 
 void MainWindow::lineButtonClicked()
@@ -185,30 +176,34 @@ void MainWindow::interiorButtonClicked()
 void MainWindow::actionZapisz()
 {
     QList <QGraphicsItem*>items = scene->items();
-    QElem *elem;
+
     int shiftX = 0; //trzeba przesunac uklad wspolrzednych
     int shiftY = 0;
 
     for(int i=0; i<container.container.size(); i++)
     {
-        elem = dynamic_cast<QElem*>(items.at(i));
+        actualElem = dynamic_cast<QElem*>(items.at(i));
 
-        shiftX = elem->x();
-        if(elem->x()<shiftX) shiftX = elem->x();
+        if(actualElem->x() < shiftX)
+            shiftX = actualElem->x();
 
-        shiftY = elem->y();
-        if(elem->y()<shiftY) shiftY = elem->y();
+        if(actualElem->y() < shiftY)
+            shiftY = actualElem->y();
     }
 
     qDebug()<<QString::number(shiftX)<<QString::number(shiftY);
 
-    for(int i=0; i<container.container.size(); i++)
+    for(int i=0; i < container.container.size(); i++)
     {
-        elem = dynamic_cast<QElem*>(items.at(i));
-        qDebug()<<QString::number(elem->x())<<QString::number(elem->y());
+        actualElem = dynamic_cast<QElem*>(items.at(i));
+        qDebug()<<QString::number(actualElem->x())<<QString::number(actualElem->y());
+        //gdy shiftX lub shiftY < 0 to neutralizujemy do 0 najbardziej przesuniety actualElement
 
-        container.container.at(i)->setX(static_cast<unsigned short>(elem->x() - shiftX));
-        container.container.at(i)->setY(static_cast<unsigned short>(elem->y() - shiftY));
+        //container.container.at(i)->setX(static_cast<unsigned short>(actualElem->x() - shiftX));
+        //container.container.at(i)->setY(static_cast<unsigned short>(actualElem->y() - shiftY));
+
+        container.container.at(i)->setY(container.container.at(i)->getY() - shiftY);
+        container.container.at(i)->setX(container.container.at(i)->getX() - shiftX);
     }
 
     QString fileName;
@@ -258,4 +253,41 @@ void MainWindow::actionZapisz()
         }
     }
     */
+}
+
+void MainWindow::actionOtworz()
+{
+    QString fileName;
+    fileName = QFileDialog::getOpenFileName(this, tr("Open file"),
+            mCurrentPath, "TxT files (*.txt)");
+
+    if(!fileName.isEmpty())
+    {
+        QContainer.clear();
+        container.container.clear();
+        scene->clear();
+        itm = NULL;
+
+        std::string stdFileName = fileName.toStdString();
+        container.impFromTxt(stdFileName, factory);
+
+        for(int i=0; i < container.container.size(); i++)
+        {
+            if(dynamic_cast<Cdiode*>(container.container.at(i)) != NULL)
+            {
+                QContainer.append(new CdiodeItem);
+            }else
+            if(dynamic_cast<Ftransistor*>(container.container.at(i)) != NULL)
+            {
+                QContainer.append(new FtransistorItem);
+            }
+
+            scene->addItem(QContainer.at(i));
+        }
+    }
+}
+
+void MainWindow::keyPressEvent(QKeyEvent *event)
+{
+
 }

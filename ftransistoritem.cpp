@@ -44,6 +44,12 @@ void FtransistorItem::paint(QPainter *painter)
     painter->drawLine(QPointF(80, 130), QPointF(80, 70));
 
     this->setScale(0.75);
+    Ftransistor::setX(static_cast<unsigned short>(x()));
+    Ftransistor::setY(static_cast<unsigned short>(y()));//real to double wiec <0 double na ushort
+    // daje np. 66554
+
+    qDebug()<<QString::number(Ftransistor::getX())<<QString::number(Ftransistor::getY());
+    //qDebug()<<QString::number(x())<<QString::number(y());
 }
 
 QRectF FtransistorItem::boundingRect() const

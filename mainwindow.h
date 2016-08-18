@@ -14,6 +14,7 @@
 #include <QLineEdit>
 #include <QPushButton>
 #include <QColorDialog>
+#include <QVector>
 
 namespace Ui {
 class MainWindow;
@@ -31,10 +32,13 @@ private:
     Ui::MainWindow *ui;
     QGraphicsScene *scene;
     QGridLayout *gboxLayout;
-    QElem **elements;
 
     Dokument container;
     QGraphicsItem *itm;
+    QElem *actualElem;
+    QVector<QElem*>QContainer;
+
+    Factory factory;
 
     QLabel *spin;
     QLineEdit *espin;
@@ -54,6 +58,8 @@ private slots:
     void lineButtonClicked();
     void interiorButtonClicked();
     void actionZapisz();
+    void actionOtworz();
+    void keyPressEvent(QKeyEvent *event);
 };
 
 #endif // MAINWINDOW_H
