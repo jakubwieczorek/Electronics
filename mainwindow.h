@@ -5,6 +5,7 @@
 #include <QtCore>
 #include <QtGui>
 #include <QDebug>
+#include "flashingcdiodeitem.h"
 #include "cdiodeitem.h"
 #include "ftransistoritem.h"
 #include "ui_mainwindow.h"
@@ -38,12 +39,18 @@ private:
     QElem *actualElem;
     QVector<QElem*>QContainer;
 
+    QList<CdiodeItem*>cList;
+    QList<FtransistorItem*>fList;
+    QList<FlashingCdiodeItem*>fcList;
+
     Factory factory;
 
     QLabel *spin;
     QLineEdit *espin;
     QPushButton *lineColorButton;
     QPushButton *interiorColorButton;
+    QLabel *time;
+    QLineEdit *etime;
 
     QColor lineColor;
     QColor interiorColor;
@@ -57,8 +64,11 @@ private slots:
     void paintElem();
     void lineButtonClicked();
     void interiorButtonClicked();
-    void actionZapisz();
-    void actionOtworz();
+    void actionSave();
+    void actionOpen();
+    void actionHorizontal();
+    void actionVertical();
+    void actionMenuBar(QAction *action);
     void keyPressEvent(QKeyEvent *event);
 };
 

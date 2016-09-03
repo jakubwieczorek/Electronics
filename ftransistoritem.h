@@ -15,6 +15,7 @@ public:
     virtual QRectF boundingRect() const;
     virtual unsigned int showID(){Ftransistor::showID();}
     virtual void expToSvg(std::ofstream &file){Ftransistor::expToSvg(file);}
+
 };
 
 #endif // FTRANSISTORITEM_H

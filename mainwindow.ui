@@ -58,22 +58,22 @@
      <height>19</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menuPlik">
+   <widget class="QMenu" name="menuFile">
     <property name="title">
-     <string>Plik</string>
+     <string>&amp;File</string>
     </property>
-    <addaction name="actionOtw_rz"/>
-    <addaction name="actionZapisz"/>
+    <addaction name="actionOpen"/>
+    <addaction name="actionSave"/>
     <addaction name="separator"/>
-    <addaction name="actionZako_cz"/>
+    <addaction name="actionQuit"/>
    </widget>
-   <widget class="QMenu" name="menuEdycja">
+   <widget class="QMenu" name="menuEdit">
     <property name="title">
-     <string>Edycja</string>
+     <string>&amp;Edit</string>
     </property>
    </widget>
-   <addaction name="menuPlik"/>
-   <addaction name="menuEdycja"/>
+   <addaction name="menuFile"/>
+   <addaction name="menuEdit"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -83,19 +83,27 @@
     <bool>false</bool>
    </attribute>
   </widget>
-  <action name="actionOtw_rz">
+  <action name="actionOpen">
+   <property name="icon">
+    <iconset resource="myres.qrc">
+     <normaloff>:/Images/open.png</normaloff>:/Images/open.png</iconset>
+   </property>
    <property name="text">
-    <string>Ot&amp;wórz</string>
+    <string>O&amp;pen</string>
    </property>
   </action>
-  <action name="actionZapisz">
+  <action name="actionSave">
+   <property name="icon">
+    <iconset resource="myres.qrc">
+     <normaloff>:/Images/save.png</normaloff>:/Images/save.png</iconset>
+   </property>
    <property name="text">
-    <string>&amp;Zapisz</string>
+    <string>&amp;Save</string>
    </property>
   </action>
-  <action name="actionZako_cz">
+  <action name="actionQuit">
    <property name="text">
-    <string>&amp;Zakończ</string>
+    <string>&amp;Quit</string>
    </property>
   </action>
  </widget>
@@ -107,6 +115,8 @@
    <header>mygraphicsview.h</header>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="myres.qrc"/>
+ </resources>
  <connections/>
 </ui>

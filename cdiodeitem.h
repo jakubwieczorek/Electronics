@@ -6,8 +6,10 @@
 #include <cdiode.h>
 #include "qelem.h"
 
-class CdiodeItem : public Cdiode, public QElem
+class CdiodeItem : public QObject, public Cdiode, public QElem
 {
+    Q_OBJECT
+
 public:
     CdiodeItem();
 
