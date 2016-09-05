@@ -12,6 +12,7 @@ MainWindow::MainWindow(QWidget *parent) :
     Ftransistor::ID = factory.registerElement(Ftransistor::CreateFtransistor);
     Cdiode::ID = factory.registerElement(Cdiode::CreateCdiode);
     FlashingCdiode::ID = factory.registerElement(FlashingCdiode::CreateFlashingCdiode);
+    FlashingFtransistor::ID = factory.registerElement(FlashingFtransistor::CreateFlashingFtransistor);
 
     //coding
     QTextCodec::setCodecForLocale(QTextCodec::codecForName ("UTF-8"));
@@ -26,6 +27,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->listWidget->addItem("Flashing Capacity Diode");
     ui->listWidget->item(2)->setIcon(QIcon("../Electronic/pojemnosciowa.jpg"));
+
+    ui->listWidget->addItem("Flashing Photo Transistor");
+    ui->listWidget->item(3)->setIcon(QIcon("../Electronic/fototransistor.png"));
 
     itm = NULL;
 
@@ -59,6 +63,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->mainToolBar->addAction(QIcon("../Electronic/vertical.png"), "Vertical");
 
     connect(ui->mainToolBar, SIGNAL(actionTriggered(QAction*)), this, SLOT(actionMenuBar(QAction*)));
+    connect(ui->menuTools, SIGNAL(triggered(QAction*)), this, SLOT(actionMenuBar(QAction*)));
 }
 
 MainWindow::~MainWindow()
@@ -76,7 +81,7 @@ MainWindow::~MainWindow()
     delete time;
 }
 
-enum {widgetCdiode, widgetFtransistor, widgetFlashingCdiode};
+enum {widgetCdiode, widgetFtransistor, widgetFlashingCdiode, widgetFlashingFtransistor};
 
 void MainWindow::addElem(QListWidgetItem *itm)
 {
@@ -92,6 +97,10 @@ void MainWindow::addElem(QListWidgetItem *itm)
     if(itm == ui->listWidget->item(widgetFlashingCdiode))
     {
         QContainer.append(new FlashingCdiodeItem);
+    }else
+    if(itm == ui->listWidget->item(widgetFlashingFtransistor))
+    {
+        QContainer.append(new FlashingFtransistorItem);
     }
 
     container+QContainer.last();
@@ -119,6 +128,7 @@ void MainWindow::modElem(QGraphicsItem *itm)
     CdiodeItem *citm;
     FtransistorItem *fitm;
     FlashingCdiodeItem *fcitm;
+    FlashingFtransistorItem *ffitm;
 
     if((actualElem = dynamic_cast<QElem*>(itm))!=NULL)
     {
@@ -152,6 +162,15 @@ void MainWindow::modElem(QGraphicsItem *itm)
         gboxLayout->addWidget(time, 4, 1);
         gboxLayout->addWidget(etime, 4, 2);
         etime->setText(QString::number(fcitm->getTime()));
+        time->show();
+        etime->show();
+    }else
+    if((ffitm = dynamic_cast<FlashingFtransistorItem*>(actualElem))!=NULL)
+    {
+        ui->groupBox->setTitle(tr("&Flashing Photo Transistor"));
+        gboxLayout->addWidget(time, 4, 1);
+        gboxLayout->addWidget(etime, 4, 2);
+        etime->setText(QString::number(ffitm->getTime()));
         time->show();
         etime->show();
     }
@@ -194,13 +213,15 @@ void MainWindow::paintElem()
         actualElem->setRotation(actualElem->getSpin());
 
         FlashingCdiodeItem *fcitm = dynamic_cast<FlashingCdiodeItem*>(actualElem);
+        FlashingFtransistorItem *ffitm = dynamic_cast<FlashingFtransistorItem*>(actualElem);
 
-        if(fcitm!=NULL)
+        if(fcitm != NULL)
         {
-            float time = etime->text().toFloat();
-            fcitm->setTime(time);
-            qDebug()<<etime->text().toFloat();
-
+            fcitm->setTime(etime->text().toFloat());
+        }else
+        if(ffitm != NULL)
+        {
+            ffitm->setTime(etime->text().toFloat());
         }
 
         actualElem->update();
@@ -226,6 +247,7 @@ void MainWindow::actionSave()
     QString fileName;
     fileName = QFileDialog::getSaveFileName(this, tr("Save file"),
             mCurrentPath, "SVG files (*.svg)");
+    if(fileName.isEmpty()) return;
 
     int shiftX = 0;
     int shiftY = 0;
@@ -293,12 +315,19 @@ void MainWindow::actionOpen()
         std::string stdFileName = fileName.toStdString();
         container.impFromTxt(stdFileName, factory);
 
-        for(int i=0; i < container.container.size(); i++)
+        for(int i=0; i < (int)container.container.size(); i++)
         {
+            if(dynamic_cast<FlashingCdiode*>(container.container.at(i)) != NULL)
+            {
+                QContainer.append(new FlashingCdiodeItem);
+            }else
+            if(dynamic_cast<FlashingFtransistor*>(container.container.at(i)) != NULL)
+            {
+                QContainer.append(new FlashingFtransistorItem);
+            }else
             if(dynamic_cast<Cdiode*>(container.container.at(i)) != NULL)
             {
                 QContainer.append(new CdiodeItem);
-
             }else
             if(dynamic_cast<Ftransistor*>(container.container.at(i)) != NULL)
             {
@@ -331,20 +360,26 @@ void MainWindow::actionHorizontal()
 
     int i;
     int z;
+    int j;
 
     for(i = 0; i < cList.size(); i++)
     {
         cList.at(i)->setPos(QPointF(i * multipleX, shiftY));
     }
 
-    for(z = 0; z < cList.size(); z++)
+    for(z = 0; z < fcList.size(); z++)
     {
         fcList.at(z)->setPos(QPointF((z + i) * multipleX, shiftY));
     }
 
-    for(int j = 0; j < fList.size(); j++)
+    for(j = 0; j < fList.size(); j++)
     {
         fList.at(j)->setPos(QPointF((i + z + j) * multipleX, 0));
+    }
+
+    for(int k = 0; k < ffList.size(); k++)
+    {
+        ffList.at(k)->setPos(QPointF((z + i + j + k) * multipleX, 0));
     }//ustawienie lokalizacji
 
 }
@@ -356,20 +391,26 @@ void MainWindow::actionVertical()
 
     int i;
     int z;
+    int j;
 
     for(i = 0; i < cList.size(); i++)
     {
         cList.at(i)->setPos(QPointF(shiftX, i * multipleY));
     }
 
-    for(z = 0; z < cList.size(); z++)
+    for(z = 0; z < fcList.size(); z++)
     {
-        fList.at(z)->setPos(QPointF(shiftX, (z + i) * multipleY));
+        fcList.at(z)->setPos(QPointF(shiftX, (z + i) * multipleY));
     }
 
-    for(int j = 0; j < fList.size(); j++)
+    for(j = 0; j < fList.size(); j++)
     {
         fList.at(j)->setPos(QPointF(0, (i + j + z) * multipleY));
+    }
+
+    for(int k = 0; k < ffList.size(); k++)
+    {
+        ffList.at(k)->setPos(QPointF(0, (z + i + j + k) * multipleY));
     }//ustawienie lokalizacji
 }
 
@@ -377,7 +418,9 @@ void MainWindow::actionMenuBar(QAction *action)
 {
     cList.clear();
     fcList.clear();
-    fList.clear();//wyczyszczenie trzech list
+    fList.clear();
+    ffList.clear();
+    //wyczyszczenie list
 
     for(int i = 0; i < QContainer.size(); i++)
     {
@@ -388,19 +431,25 @@ void MainWindow::actionMenuBar(QAction *action)
         if(dynamic_cast<FlashingCdiodeItem*>(QContainer.at(i)) != NULL)
         {
             fcList.append(dynamic_cast<FlashingCdiodeItem*>(QContainer.at(i)));
+        }else
+        if(dynamic_cast<FlashingFtransistorItem*>(QContainer.at(i)) != NULL)
+        {
+            ffList.append(dynamic_cast<FlashingFtransistorItem*>(QContainer.at(i)));
         }
         else
         {
             fList.append(dynamic_cast<FtransistorItem*>(QContainer.at(i)));
         }
-    } // zapisanie kontenera do dwoch list
+    } // zapisanie kontenera do list
 
     QList<QAction*>menuBarActions = ui->mainToolBar->actions();
-    if(menuBarActions.at(0) == action)
+    QList<QAction*>menuToolsActions = ui->menuTools->actions();
+
+    if(menuBarActions.at(0) == action || menuToolsActions.at(0) == action)
     {
         actionHorizontal();
     }else
-    if(menuBarActions.at(1) == action)
+    if(menuBarActions.at(1) == action || menuToolsActions.at(1) == action)
     {
         actionVertical();
     }
@@ -414,10 +463,4 @@ void MainWindow::actionMenuBar(QAction *action)
     }//zczytanie do kontenera z dokumentu
 
     //sa posortwane na scenie
-}
-
-
-void MainWindow::keyPressEvent(QKeyEvent *event)
-{
-
 }

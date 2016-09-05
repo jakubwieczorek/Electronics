@@ -8,6 +8,7 @@
 #include "flashingcdiodeitem.h"
 #include "cdiodeitem.h"
 #include "ftransistoritem.h"
+#include "flashingftransistoritem.h"
 #include "ui_mainwindow.h"
 #include <dokument.h>
 #include <QFormLayout>
@@ -42,6 +43,7 @@ private:
     QList<CdiodeItem*>cList;
     QList<FtransistorItem*>fList;
     QList<FlashingCdiodeItem*>fcList;
+    QList<FlashingFtransistorItem*>ffList;
 
     Factory factory;
 
@@ -69,7 +71,6 @@ private slots:
     void actionHorizontal();
     void actionVertical();
     void actionMenuBar(QAction *action);
-    void keyPressEvent(QKeyEvent *event);
 };
 
 #endif // MAINWINDOW_H

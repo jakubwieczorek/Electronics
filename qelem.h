@@ -10,11 +10,9 @@ class QElem: virtual public Element, virtual public QGraphicsItem
 {
 public:
     QElem();
-    virtual unsigned int showID(){}
-    virtual void expToSvg(std::ofstream &file){}
 
-    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-    virtual QRectF boundingRect() const;
+    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *);
+    virtual QRectF boundingRect() const {}
 
     void setBacklight(bool isBacklighted){backlight = isBacklighted;}
     bool getBacklight(){return backlight;}
@@ -24,6 +22,8 @@ public:
 private:
     bool backlight;
     QRectF backlightRect;
+    virtual unsigned int showID(){}
+    virtual void expToSvg(std::ofstream &){}
 };
 
 #endif // QELEM_H

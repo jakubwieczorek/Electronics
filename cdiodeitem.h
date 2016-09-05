@@ -16,7 +16,7 @@ public:
     virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
     virtual void paint(QPainter *painter);
     virtual QRectF boundingRect() const;
-    virtual unsigned int showID(){Cdiode::showID();}
+    virtual unsigned int showID(){return Cdiode::showID();}
     virtual void expToSvg(std::ofstream &file){Cdiode::expToSvg(file);}
 };
 

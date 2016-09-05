@@ -13,7 +13,7 @@ public:
     virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
     virtual void paint(QPainter *painter);
     virtual QRectF boundingRect() const;
-    virtual unsigned int showID(){Ftransistor::showID();}
+    virtual unsigned int showID(){return Ftransistor::showID();}
     virtual void expToSvg(std::ofstream &file){Ftransistor::expToSvg(file);}
 
 };

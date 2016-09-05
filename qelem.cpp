@@ -5,7 +5,7 @@ QElem::QElem()
     backlight = false;
 }
 
-void QElem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void QElem::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
     QPen backlightPen(Qt::black, 5);
     backlightPen.setJoinStyle(Qt::MiterJoin);
@@ -15,10 +15,3 @@ void QElem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     QBrush backlightRectBrush(backlightColor);
     painter->fillRect(backlightRect, backlightRectBrush);
 }
-
-QRectF QElem::boundingRect() const
-{
-
-}
-
-

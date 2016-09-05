@@ -15,6 +15,22 @@
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout_2">
+    <item row="2" column="0">
+     <widget class="QGroupBox" name="groupBox">
+      <property name="maximumSize">
+       <size>
+        <width>200</width>
+        <height>200</height>
+       </size>
+      </property>
+      <property name="title">
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1" rowspan="3">
+     <widget class="QGraphicsView" name="graphicsView"/>
+    </item>
     <item row="0" column="0" rowspan="2">
      <widget class="QListWidget" name="listWidget">
       <property name="minimumSize">
@@ -30,22 +46,6 @@
        </size>
       </property>
      </widget>
-    </item>
-    <item row="2" column="0">
-     <widget class="QGroupBox" name="groupBox">
-      <property name="maximumSize">
-       <size>
-        <width>200</width>
-        <height>200</height>
-       </size>
-      </property>
-      <property name="title">
-       <string/>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="1" rowspan="3">
-     <widget class="MyGraphicsView" name="graphicsView"/>
     </item>
    </layout>
   </widget>
@@ -63,6 +63,7 @@
      <string>&amp;File</string>
     </property>
     <addaction name="actionOpen"/>
+    <addaction name="actionEx_port_to_pdf"/>
     <addaction name="actionSave"/>
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
@@ -71,9 +72,19 @@
     <property name="title">
      <string>&amp;Edit</string>
     </property>
+    <addaction name="actionDe_lete_actual_element"/>
+    <addaction name="actionD_elete_all_elements"/>
+   </widget>
+   <widget class="QMenu" name="menuTools">
+    <property name="title">
+     <string>To&amp;ols</string>
+    </property>
+    <addaction name="actionHorizontal"/>
+    <addaction name="actionVertical"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
+   <addaction name="menuTools"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -91,6 +102,9 @@
    <property name="text">
     <string>O&amp;pen</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
   </action>
   <action name="actionSave">
    <property name="icon">
@@ -105,16 +119,50 @@
    <property name="text">
     <string>&amp;Quit</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
+  </action>
+  <action name="action_Vertival">
+   <property name="text">
+    <string>&amp;Vertival</string>
+   </property>
+  </action>
+  <action name="action_Horizontal">
+   <property name="text">
+    <string>H&amp;orizontal</string>
+   </property>
+  </action>
+  <action name="actionDe_lete_actual_element">
+   <property name="text">
+    <string>&amp;Delete actual element</string>
+   </property>
+   <property name="shortcut">
+    <string>Del</string>
+   </property>
+  </action>
+  <action name="actionD_elete_all_elements">
+   <property name="text">
+    <string>D&amp;elete all elements</string>
+   </property>
+  </action>
+  <action name="actionHorizontal">
+   <property name="text">
+    <string>&amp;Horizontal</string>
+   </property>
+  </action>
+  <action name="actionVertical">
+   <property name="text">
+    <string>V&amp;ertical</string>
+   </property>
+  </action>
+  <action name="actionEx_port_to_pdf">
+   <property name="text">
+    <string>Ex&amp;port to pdf</string>
+   </property>
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <customwidgets>
-  <customwidget>
-   <class>MyGraphicsView</class>
-   <extends>QGraphicsView</extends>
-   <header>mygraphicsview.h</header>
-  </customwidget>
- </customwidgets>
  <resources>
   <include location="myres.qrc"/>
  </resources>

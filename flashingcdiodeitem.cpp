@@ -78,5 +78,4 @@ void FlashingCdiodeItem::timerEvent(QTimerEvent *event)
 
     killTimer(event->timerId());
     startTimer(this->getTime() * 1000);
-    qDebug()<<this->getTime();
 }

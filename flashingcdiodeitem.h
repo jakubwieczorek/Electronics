@@ -16,13 +16,10 @@ public:
     virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
     virtual void paint(QPainter *painter);
     virtual QRectF boundingRect() const;
-    virtual unsigned int showID(){FlashingCdiode::showID();}
+    virtual unsigned int showID(){return FlashingCdiode::showID();}
     virtual void expToSvg(std::ofstream &file){FlashingCdiode::expToSvg(file);}
 protected:
     virtual void timerEvent(QTimerEvent *event);
-
-private:
-    QTimer *timer;
 };
 
 #endif // FLASHINGCDIODEITEM_H
