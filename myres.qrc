@@ -4,5 +4,6 @@
         <file>pojemnosciowa.jpg</file>
         <file>save.png</file>
         <file>open.png</file>
+        <file>pdf.png</file>
     </qresource>
 </RCC>

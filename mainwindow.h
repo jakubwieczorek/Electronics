@@ -71,6 +71,9 @@ private slots:
     void actionHorizontal();
     void actionVertical();
     void actionMenuBar(QAction *action);
+    void deleteElem();
+    void deleteAllElem();
+    void writeToPdf();
 };
 
 #endif // MAINWINDOW_H

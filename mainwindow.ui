@@ -114,6 +114,9 @@
    <property name="text">
     <string>&amp;Save</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
   </action>
   <action name="actionQuit">
    <property name="text">
@@ -157,6 +160,10 @@
    </property>
   </action>
   <action name="actionEx_port_to_pdf">
+   <property name="icon">
+    <iconset resource="myres.qrc">
+     <normaloff>:/Images/pdf.png</normaloff>:/Images/pdf.png</iconset>
+   </property>
    <property name="text">
     <string>Ex&amp;port to pdf</string>
    </property>

@@ -3,6 +3,7 @@
 #include <QFileDialog>
 #include <QKeyEvent>
 #include <QSvgGenerator>
+#include <QPdfWriter>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -53,6 +54,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionSave, SIGNAL(triggered(bool)), this, SLOT(actionSave()));
     connect(ui->actionOpen, SIGNAL(triggered(bool)), this, SLOT(actionOpen()));
     connect(etime, SIGNAL(editingFinished()), this, SLOT(paintElem()));
+    connect(ui->actionD_elete_all_elements, SIGNAL(triggered(bool)), this, SLOT(deleteAllElem()));
+    connect(ui->actionDe_lete_actual_element, SIGNAL(triggered(bool)), this, SLOT(deleteElem()));
+    connect(ui->actionEx_port_to_pdf, SIGNAL(triggered(bool)), this, SLOT(writeToPdf()));
 
     gboxLayout = new QGridLayout;
     ui->groupBox->setLayout(gboxLayout);
@@ -110,6 +114,11 @@ void MainWindow::addElem(QListWidgetItem *itm)
 
 void MainWindow::modElem(QGraphicsItem *itm)
 {
+    spin->show();
+    espin->show();
+    lineColorButton->show();
+    interiorColorButton->show();
+
     spin->setText(tr("spin"));
     espin->setMaximumSize(QSize(10000, 25));
 
@@ -281,8 +290,8 @@ void MainWindow::actionSave()
         QSvgGenerator svgGen;
 
         svgGen.setFileName(fileName);
-        svgGen.setSize(QSize(200, 200));
-        svgGen.setViewBox(QRect(0, 0, 200, 200));
+        svgGen.setSize(ui->graphicsView->size());
+        svgGen.setViewBox(ui->graphicsView->rect());
 
         QPainter painter(&svgGen);
         scene->render(&painter);
@@ -463,4 +472,68 @@ void MainWindow::actionMenuBar(QAction *action)
     }//zczytanie do kontenera z dokumentu
 
     //sa posortwane na scenie
+}
+
+void MainWindow::deleteElem()
+{
+    if(QContainer.isEmpty())
+        return;
+
+    Element *tempElem = static_cast<Element*>(actualElem);
+    for(int i = 0; i < container.container.size(); i++)
+    {
+        if(tempElem == container.container.at(i))
+        {
+            container=container - (i + 1);
+            break;
+        }
+    }
+
+    QContainer.removeOne(actualElem);
+    actualElem = NULL;
+
+    scene->removeItem(itm);
+    itm = NULL;
+
+    time->hide();
+    etime->hide();
+    spin->hide();
+    espin->hide();
+    lineColorButton->hide();
+    interiorColorButton->hide();
+    ui->groupBox->setTitle("");
+}
+
+void MainWindow::deleteAllElem()
+{
+    QContainer.clear();
+    container.container.clear();
+
+    scene->clear();
+    time->hide();
+    etime->hide();
+    spin->hide();
+    espin->hide();
+    lineColorButton->hide();
+    interiorColorButton->hide();
+    ui->groupBox->setTitle("");
+
+    itm = NULL;
+    actualElem = NULL;
+}
+
+void MainWindow::writeToPdf()
+{
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Export to PDF"),
+            mCurrentPath, "PDF files (*.pdf)");
+
+    if(fileName.isEmpty())
+        return;
+
+    QPdfWriter *pdfWriter = new QPdfWriter(fileName);
+
+    QPainter painter(pdfWriter);
+
+    pdfWriter->setPageSize(QPagedPaintDevice::A4);
+    scene->render(&painter);
 }
