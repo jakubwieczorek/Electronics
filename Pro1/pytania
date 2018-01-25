@@ -1,0 +1,5 @@
+unsigned liczba;
+
+cin<<liczba;// załóżmy że osoba podała -1 
+// wtedy do liczby zostanie przypisane 65565 max dla short jak to skontrolować ? failbit nie działa.
+jak odpalić dbg -tui tak żeby kod był w osobnym oknie jak na prezentacji

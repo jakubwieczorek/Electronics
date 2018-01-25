@@ -1,0 +1,7 @@
+# pomijam plik .swp
+
+*.swp
+*.o
+*~
+*.out
+*.svg

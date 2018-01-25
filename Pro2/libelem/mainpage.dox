@@ -1,0 +1,12 @@
+ /**
+ * \mainpage Elements SVG Library
+ * \section Project2JakubWieczorek2AR
+ * In this documentation I show only header files. The implemetation with comments is available on my\n
+ * Github profile:\n
+ * <a href="https://github.com/jakubwieczorek/Pro2.git">here is link</a>.\n
+ * The main purpose is create dynamic library which provide classes to create svg code with electronics elements.\n
+ * Hense programists has to only create menu and communication with user.\n
+ * contact with me:\n
+ * jakubwieczorek0101@gmail.com
+ */
+

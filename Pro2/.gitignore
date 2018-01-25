@@ -2,7 +2,14 @@
 *.~
 *.metadata/
 *.svg~
+*.html
+*.tex
+*.js
+*.dot
+*.md5
 *.swp
 *.out
 *.so
 *.tmp
+*.map
+*.png

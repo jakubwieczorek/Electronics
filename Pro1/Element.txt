@@ -1,0 +1,17 @@
+CTYPE html>
+<html>
+<body>
+
+<h1>My first SVG</h1>
+
+<svg width="width+10" height="width+10">
+   <circle cx="lical[0]" cy="local[1]" r="width" stroke=rgb(line_color[0],line_color[1],line_color[2]) stroke-width="stoke_weight"
+   fill=rgb(interior_color[0],interior_color[1],interior_color[2]) />
+
+  <line x1="local[0]-1/4*width" y1="local[1]-3/4*width" x2="local[0]-1/4*width" y2="local[1]+3/4*width"
+  style="stroke:rgb(line_color[0],line_color[1],line_color[2]);stroke-width:3*stroke_weight" />
+</svg> 
+ 
+</body>
+</html>
+
